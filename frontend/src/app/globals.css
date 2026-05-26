@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+:root {
+  --background: #FFF5EA; /* Crema / Blanco Roto */
+  --foreground: #0F1226; /* Azul Noche / Casi Negro */
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+
+  /* Remap indigo to Naranja Vibrante brand colors */
+  --color-indigo-50: #FFF2EB;
+  --color-indigo-100: #FFE5D4;
+  --color-indigo-200: #FFC099;
+  --color-indigo-300: #FF9E66;
+  --color-indigo-400: #FF7D33;
+  --color-indigo-500: #FF6B1A;
+  --color-indigo-600: #FF5A00; /* Naranja Vibrante */
+  --color-indigo-700: #E65100;
+  --color-indigo-800: #CC4800;
+  --color-indigo-900: #993600;
+  --color-indigo-950: #662400;
+
+  /* Remap slate to brand text, borders, and navy accents */
+  --color-slate-50: #FCFAF7;
+  --color-slate-100: #F6F1EA;
+  --color-slate-200: #ECE4D9;
+  --color-slate-300: #DDD2C4;
+  --color-slate-400: #7E84A3; /* Medium grey text */
+  --color-slate-500: #4D5270; /* Description text */
+  --color-slate-600: #2D314E;
+  --color-slate-700: #1B2757;
+  --color-slate-800: #E8DFD5; /* Border grey */
+  --color-slate-850: #DFD5C9;
+  --color-slate-900: #283A7F; /* Azul Marino */
+  --color-slate-950: #0F1226; /* Azul Noche / Casi Negro */
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  min-height: 100vh;
+}
+
+/* Glassmorphism card utility for light cream theme */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(40, 58, 127, 0.12); /* Azul Marino translucent border */
+  border-radius: 16px;
+  box-shadow: 0 4px 20px -2px rgba(15, 18, 38, 0.05);
+}
+
+/* Glassmorphism modal/drawer utility */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(40, 58, 127, 0.15);
+}
+
+/* Smooth transition for hover effects */
+.transition-premium {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 245, 234, 0.3);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 90, 0, 0.3); /* Brand orange scrollbar */
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 90, 0, 0.5);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.stagger-1 { animation-delay: 0.08s; }
+.stagger-2 { animation-delay: 0.16s; }
+.stagger-3 { animation-delay: 0.24s; }
+.stagger-4 { animation-delay: 0.32s; }

@@ -1,0 +1,47 @@
+{
+  "name": "compass-dabox-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Compass DABox - Employee Savings Management",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "nodemon --watch src --ext ts --exec \"tsx src/server.ts\"",
+    "build": "npx prisma generate && tsc",
+    "start": "node dist/server.js",
+    "db:migrate": "npx prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "npx prisma studio",
+    "postinstall": "prisma generate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.2.1",
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
+    "helmet": "^8.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.1.1",
+    "xlsx": "^0.18.5",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^25.9.1",
+    "axios": "^1.16.1",
+    "form-data": "^4.0.5",
+    "nodemon": "^3.1.14",
+    "prisma": "^6.2.1",
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3"
+  }
+}
