@@ -37,5 +37,6 @@ router.get("/dashboard", adminController.getDashboard);
 router.get("/employees", adminController.getEmployees);
 router.get("/employees/:id/records", adminController.getEmployeeRecords);
 router.get("/upload-logs", adminController.getUploadLogs);
+router.delete("/upload-logs/:id", adminController.deleteUploadLog);
 
 export default router;

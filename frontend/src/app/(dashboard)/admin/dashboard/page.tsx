@@ -13,6 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { toast } from "sonner";
 import {
   ShieldAlert,
   Users,
@@ -25,6 +26,7 @@ import {
   Clock,
   ArrowRight,
   RefreshCw,
+  Trash2,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -62,6 +64,26 @@ export default function AdminDashboard() {
   const handleRefresh = () => {
     setIsRefreshing(true);
     fetchData(true);
+  };
+
+  const handleDeleteLog = async (id: string, filename: string, periodDate: string) => {
+    const periodStr = formatDate(periodDate);
+    const confirmed = window.confirm(
+      `¿Estás seguro de que deseas eliminar el archivo "${filename}"?\n\nEsto borrará todos los registros y saldos de los colaboradores correspondientes al periodo "${periodStr}". Esta acción no se puede deshacer.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      toast.loading("Eliminando registros del periodo...", { id: "delete-log" });
+      const response = await api.delete(`/api/admin/upload-logs/${id}`);
+      toast.success(response.data.message || "Registros de nómina eliminados exitosamente", { id: "delete-log" });
+      fetchData(true);
+    } catch (error: any) {
+      console.error("Error al eliminar log de carga:", error);
+      const message = error.response?.data?.error || "No se pudo eliminar el registro de carga.";
+      toast.error(message, { id: "delete-log" });
+    }
   };
 
   // Convert monthlyGrowth to Recharts format
@@ -317,6 +339,7 @@ export default function AdminDashboard() {
                   <TableHead className="text-slate-600 font-semibold py-3">Filas Procesadas</TableHead>
                   <TableHead className="text-slate-600 font-semibold py-3">Nuevos Cuentas</TableHead>
                   <TableHead className="text-right text-slate-600 font-semibold py-3">Cargó</TableHead>
+                  <TableHead className="text-right text-slate-600 font-semibold py-3">Acción</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="divide-y divide-slate-200">
@@ -351,12 +374,23 @@ export default function AdminDashboard() {
                       <TableCell className="py-3 text-xs font-medium text-right text-slate-700">
                         {log.admin?.username || "Admin"}
                       </TableCell>
+                      <TableCell className="py-3 text-right">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-rose-500 hover:text-rose-700 hover:bg-rose-500/10 rounded-lg"
+                          onClick={() => handleDeleteLog(log.id, log.filename, log.periodDate)}
+                          title="Eliminar esta carga y sus registros"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
                     <td
-                      colSpan={7}
+                      colSpan={8}
                       className="h-28 text-center text-slate-500 text-sm"
                     >
                       No se han realizado cargas de archivos de nómina.

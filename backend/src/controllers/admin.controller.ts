@@ -277,3 +277,45 @@ export async function getUploadLogs(
     res.status(500).json({ error: message });
   }
 }
+
+// ── DELETE /api/admin/upload-logs/:id ──────────────────────────────────
+export async function deleteUploadLog(
+  req: Request,
+  res: Response
+): Promise<void> {
+  try {
+    const id = String(req.params.id);
+
+    const log = await prisma.uploadLog.findUnique({
+      where: { id },
+    });
+
+    if (!log) {
+      res.status(404).json({ error: "Log de carga no encontrado." });
+      return;
+    }
+
+    // Execute in a transaction:
+    // 1. Delete all monthly records matching the periodDate of this log
+    // 2. Delete the log itself
+    await prisma.$transaction(async (tx) => {
+      await tx.employeeMonthlyRecord.deleteMany({
+        where: {
+          periodDate: log.periodDate,
+        },
+      });
+
+      await tx.uploadLog.delete({
+        where: { id },
+      });
+    });
+
+    res.json({
+      message: `El registro de carga y los movimientos del periodo ${log.periodDate.toISOString().substring(0, 7)} fueron eliminados exitosamente.`,
+    });
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "Error al eliminar log de carga";
+    res.status(500).json({ error: message });
+  }
+}
