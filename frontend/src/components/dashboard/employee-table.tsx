@@ -19,7 +19,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Search, ChevronLeft, ChevronRight, Eye, UserX, UserCheck } from "lucide-react";
+import {
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  UserX,
+  UserCheck,
+  ArrowUp,
+  ArrowDown,
+  ArrowUpDown,
+  RefreshCw,
+} from "lucide-react";
 import { formatCurrency } from "../../lib/format";
 import { Skeleton } from "../ui/skeleton";
 
@@ -45,8 +56,29 @@ export function EmployeeTable({
 }: EmployeeTableProps) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [typeFilter, setTypeFilter] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  
+  // Sort states cycle: 'asc' -> 'desc' -> null (original state)
+  const [sortBy, setSortBy] = useState<"fullName" | "payrollCode" | null>(null);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
+
+  // Sorting handler with 3-state cycle (A-Z -> Z-A -> Original)
+  const handleSort = (column: "fullName" | "payrollCode") => {
+    if (sortBy === column) {
+      if (sortOrder === "asc") {
+        setSortOrder("desc");
+      } else if (sortOrder === "desc") {
+        setSortBy(null);
+        setSortOrder(null);
+      }
+    } else {
+      setSortBy(column);
+      setSortOrder("asc");
+    }
+    setCurrentPage(1);
+  };
 
   // Filter logic
   const filtered = employees.filter((emp) => {
@@ -59,13 +91,42 @@ export function EmployeeTable({
       (statusFilter === "ACTIVE" && emp.isActive) ||
       (statusFilter === "INACTIVE" && !emp.isActive);
 
-    return matchesSearch && matchesStatus;
+    const matchesType =
+      typeFilter === "ALL" ||
+      emp.payrollType.toUpperCase() === typeFilter;
+
+    return matchesSearch && matchesStatus && matchesType;
+  });
+
+  // Sort logic on filtered list (if sorting is active)
+  const sorted = [...filtered].sort((a, b) => {
+    if (!sortBy || !sortOrder) return 0; // Return original database order
+
+    if (sortBy === "payrollCode") {
+      const aNum = Number(a.payrollCode);
+      const bNum = Number(b.payrollCode);
+
+      if (!isNaN(aNum) && !isNaN(bNum)) {
+        return sortOrder === "asc" ? aNum - bNum : bNum - aNum;
+      }
+      return sortOrder === "asc"
+        ? a.payrollCode.localeCompare(b.payrollCode, undefined, { numeric: true })
+        : b.payrollCode.localeCompare(a.payrollCode, undefined, { numeric: true });
+    }
+
+    if (sortBy === "fullName") {
+      return sortOrder === "asc"
+        ? a.fullName.localeCompare(b.fullName)
+        : b.fullName.localeCompare(a.fullName);
+    }
+
+    return 0;
   });
 
   // Pagination logic
-  const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
+  const totalPages = Math.ceil(sorted.length / itemsPerPage) || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginated = filtered.slice(startIndex, startIndex + itemsPerPage);
+  const paginated = sorted.slice(startIndex, startIndex + itemsPerPage);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -78,18 +139,27 @@ export function EmployeeTable({
     setCurrentPage(1); // Reset page to 1
   };
 
-  const handleStatusFilterChange = (val: string | null) => {
-    if (val) {
-      setStatusFilter(val);
-      setCurrentPage(1); // Reset page to 1
-    }
+  // Check if any filter or sorting is active to display the clear button
+  const hasActiveFilters =
+    search !== "" ||
+    statusFilter !== "ALL" ||
+    typeFilter !== "ALL" ||
+    sortBy !== null;
+
+  const handleResetFilters = () => {
+    setSearch("");
+    setStatusFilter("ALL");
+    setTypeFilter("ALL");
+    setSortBy(null);
+    setSortOrder(null);
+    setCurrentPage(1);
   };
 
   return (
     <div className="space-y-4">
-      {/* Search & Filters */}
+      {/* Search & Filters reset */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative flex-1 max-w-md">
+        <div className="relative flex-grow max-w-md">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
             <Search className="h-4 w-4" />
           </span>
@@ -97,25 +167,21 @@ export function EmployeeTable({
             placeholder="Buscar por nombre o número de nómina..."
             value={search}
             onChange={handleSearchChange}
-            className="pl-9 border-slate-300 bg-white text-slate-950 placeholder-slate-400 focus-visible:ring-indigo-600/30"
+            className="pl-9 border-slate-300 bg-white text-slate-955 placeholder-slate-400 focus-visible:ring-indigo-600/30"
           />
         </div>
 
-        <div className="w-full sm:w-[180px]">
-          <Select
-            value={statusFilter}
-            onValueChange={handleStatusFilterChange}
+        {hasActiveFilters && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleResetFilters}
+            className="text-xs text-indigo-650 hover:text-indigo-855 hover:bg-indigo-600/10 rounded-xl px-3 py-1 h-9 gap-1.5 transition-premium"
           >
-            <SelectTrigger className="border-slate-300 bg-white text-slate-950">
-              <SelectValue placeholder="Filtrar por Estatus" />
-            </SelectTrigger>
-            <SelectContent className="border-slate-200 bg-white text-slate-955">
-              <SelectItem value="ALL">Todos los Estatus</SelectItem>
-              <SelectItem value="ACTIVE">Activos</SelectItem>
-              <SelectItem value="INACTIVE">Inactivos</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+            <RefreshCw className="h-3.5 w-3.5 animate-premium-spin" />
+            Restablecer Filtros y Orden
+          </Button>
+        )}
       </div>
 
       {/* Table Container */}
@@ -123,11 +189,117 @@ export function EmployeeTable({
         <Table>
           <TableHeader className="bg-slate-50 border-b border-slate-200">
             <TableRow className="border-b border-slate-200 hover:bg-slate-50/50">
-              <TableHead className="text-slate-600 font-semibold py-3.5">Nombre</TableHead>
-              <TableHead className="text-slate-600 font-semibold py-3.5">ID Nómina</TableHead>
-              <TableHead className="text-slate-600 font-semibold py-3.5">Clave (Tipo)</TableHead>
+              
+              {/* Nombre header (Sortable 3-states) */}
+              <TableHead
+                className="text-slate-600 font-semibold py-3.5 cursor-pointer hover:text-slate-955 transition-premium select-none"
+                onClick={() => handleSort("fullName")}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span className={sortBy === "fullName" ? "text-indigo-650 font-bold" : ""}>
+                    Nombre
+                  </span>
+                  {sortBy === "fullName" ? (
+                    sortOrder === "asc" ? (
+                      <ArrowUp className="h-3.5 w-3.5 text-indigo-650" />
+                    ) : (
+                      <ArrowDown className="h-3.5 w-3.5 text-indigo-650" />
+                    )
+                  ) : (
+                    <ArrowUpDown className="h-3.5 w-3.5 text-slate-400 opacity-60" />
+                  )}
+                </div>
+              </TableHead>
+              
+              {/* ID Nómina header (Sortable 3-states) */}
+              <TableHead
+                className="text-slate-600 font-semibold py-3.5 cursor-pointer hover:text-slate-955 transition-premium select-none"
+                onClick={() => handleSort("payrollCode")}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span className={sortBy === "payrollCode" ? "text-indigo-650 font-bold" : ""}>
+                    ID Nómina
+                  </span>
+                  {sortBy === "payrollCode" ? (
+                    sortOrder === "asc" ? (
+                      <ArrowUp className="h-3.5 w-3.5 text-indigo-650" />
+                    ) : (
+                      <ArrowDown className="h-3.5 w-3.5 text-indigo-650" />
+                    )
+                  ) : (
+                    <ArrowUpDown className="h-3.5 w-3.5 text-slate-400 opacity-60" />
+                  )}
+                </div>
+              </TableHead>
+              
+              {/* Frecuencia de ingreso header (Filterable dropdown) */}
+              <TableHead className="py-2">
+                <Select
+                  value={typeFilter}
+                  onValueChange={(val: string | null) => {
+                    if (val) {
+                      setTypeFilter(val);
+                      setCurrentPage(1);
+                    }
+                  }}
+                >
+                  <SelectTrigger 
+                    className="border-none bg-transparent hover:bg-slate-200/50 p-1 pl-2 text-xs font-semibold text-slate-600 hover:text-slate-955 gap-1 focus:ring-0 cursor-pointer"
+                    size="sm"
+                  >
+                    <SelectValue>
+                      {typeFilter === "ALL" ? (
+                        "Frecuencia de ingreso"
+                      ) : typeFilter === "SEM" ? (
+                        <span className="text-indigo-650 font-bold">Sem</span>
+                      ) : (
+                        <span className="text-indigo-650 font-bold">Qna</span>
+                      )}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent className="border-slate-200 bg-white text-slate-955 min-w-[160px]">
+                    <SelectItem value="ALL">Sin filtro</SelectItem>
+                    <SelectItem value="SEM">Semanales (Sem)</SelectItem>
+                    <SelectItem value="QNA">Quincenales (Qna)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </TableHead>
+              
               <TableHead className="text-slate-600 font-semibold py-3.5">Saldo Actual</TableHead>
-              <TableHead className="text-slate-600 font-semibold py-3.5">Status</TableHead>
+              
+              {/* Status header (Filterable dropdown) */}
+              <TableHead className="py-2">
+                <Select
+                  value={statusFilter}
+                  onValueChange={(val: string | null) => {
+                    if (val) {
+                      setStatusFilter(val);
+                      setCurrentPage(1);
+                    }
+                  }}
+                >
+                  <SelectTrigger 
+                    className="border-none bg-transparent hover:bg-slate-200/50 p-1 pl-2 text-xs font-semibold text-slate-600 hover:text-slate-955 gap-1 focus:ring-0 cursor-pointer"
+                    size="sm"
+                  >
+                    <SelectValue>
+                      {statusFilter === "ALL" ? (
+                        "Status"
+                      ) : statusFilter === "ACTIVE" ? (
+                        <span className="text-indigo-650 font-bold">Activo</span>
+                      ) : (
+                        <span className="text-indigo-650 font-bold">Inactivo</span>
+                      )}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent className="border-slate-200 bg-white text-slate-955 min-w-[140px]">
+                    <SelectItem value="ALL">Sin filtro</SelectItem>
+                    <SelectItem value="ACTIVE">Activo</SelectItem>
+                    <SelectItem value="INACTIVE">Inactivo</SelectItem>
+                  </SelectContent>
+                </Select>
+              </TableHead>
+              
               <TableHead className="text-right text-slate-600 font-semibold py-3.5">Detalle</TableHead>
             </TableRow>
           </TableHeader>
@@ -150,7 +322,7 @@ export function EmployeeTable({
                   onClick={() => onRowClick(emp)}
                   className="cursor-pointer border-b border-slate-200 hover:bg-indigo-600/5 transition-premium group"
                 >
-                  <TableCell className="py-3 text-slate-950 font-bold">
+                  <TableCell className="py-3 text-slate-955 font-bold">
                     {emp.fullName}
                   </TableCell>
                   <TableCell className="py-3 font-mono text-xs font-semibold text-slate-500">
@@ -206,19 +378,43 @@ export function EmployeeTable({
 
       {/* Pagination Controls */}
       {filtered.length > 0 && (
-        <div className="flex flex-col gap-2 sm:flex-row items-center justify-between text-sm py-2">
-          <span className="text-xs text-slate-500">
-            Mostrando del {startIndex + 1} al{" "}
-            {Math.min(startIndex + itemsPerPage, filtered.length)} de{" "}
-            {filtered.length} colaboradores
-          </span>
+        <div className="flex flex-col gap-3 sm:flex-row items-center justify-between text-sm py-2">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <span className="text-xs text-slate-500">
+              Mostrando del {startIndex + 1} al{" "}
+              {Math.min(startIndex + itemsPerPage, filtered.length)} de{" "}
+              {filtered.length} colaboradores
+            </span>
+            <div className="flex items-center gap-1.5 text-xs text-slate-500">
+              <span>Mostrar:</span>
+              <Select
+                value={String(itemsPerPage)}
+                onValueChange={(val: string | null) => {
+                  if (val) {
+                    setItemsPerPage(Number(val));
+                    setCurrentPage(1);
+                  }
+                }}
+              >
+                <SelectTrigger className="h-7 w-[70px] border-slate-300 bg-white text-slate-955 py-0 px-2 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="border-slate-200 bg-white text-slate-955 min-w-[70px]">
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
           <div className="flex items-center gap-1">
             <Button
               variant="outline"
               size="icon"
               disabled={currentPage === 1 || isLoading}
               onClick={() => handlePageChange(currentPage - 1)}
-              className="h-8 w-8 border-slate-300 bg-white/50 hover:bg-slate-100 text-slate-600 hover:text-slate-950"
+              className="h-8 w-8 border-slate-300 bg-white/50 hover:bg-slate-100 text-slate-600 hover:text-slate-955"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>

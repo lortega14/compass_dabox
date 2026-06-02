@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../../stores/auth-store";
 import { toast } from "sonner";
-import { User, Lock, Eye, EyeOff, Shield } from "lucide-react";
+import { User, Lock, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -55,16 +55,15 @@ export default function LoginPage() {
 
       <div className="relative w-full max-w-md animate-fade-in-up">
         {/* Logo and Headings */}
-        <div className="mb-8 text-center">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600/10 text-indigo-650 border border-indigo-600/20 mb-3 shadow-lg shadow-indigo-600/5">
-            <Shield className="h-6 w-6" />
+        <div className="mb-8 flex flex-col items-center text-center">
+          <div className="mb-4 h-16 w-auto flex items-center justify-center">
+            <img 
+              src="/logo-complete-color.svg" 
+              alt="DABox Logo" 
+              className="h-16 w-auto object-contain"
+            />
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight">
-            <span className="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-600 bg-clip-text text-transparent">
-              Compass DABox
-            </span>
-          </h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-1 text-sm font-semibold tracking-wider text-slate-500 uppercase">
             Caja de Ahorro y Préstamos
           </p>
         </div>

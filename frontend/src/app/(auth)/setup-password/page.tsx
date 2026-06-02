@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../../stores/auth-store";
 import { useAuth } from "../../../hooks/use-auth";
 import { toast } from "sonner";
-import { Lock, ShieldCheck, Check, AlertCircle } from "lucide-react";
+import { Lock, Check, AlertCircle } from "lucide-react";
 
 export default function SetupPasswordPage() {
   // Protect route: require user to be authenticated, wait until checks pass
@@ -72,9 +72,13 @@ export default function SetupPasswordPage() {
 
       <div className="relative w-full max-w-md animate-fade-in-up">
         {/* Headings */}
-        <div className="mb-8 text-center">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600/10 text-indigo-650 border border-indigo-600/20 mb-3 shadow-lg shadow-indigo-600/5">
-            <ShieldCheck className="h-6 w-6" />
+        <div className="mb-8 flex flex-col items-center text-center">
+          <div className="mb-4 h-12 w-12 flex items-center justify-center">
+            <img 
+              src="/symbol-color.svg" 
+              alt="DABox Symbol" 
+              className="h-12 w-auto object-contain"
+            />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-955">
             Actualizar Contraseña

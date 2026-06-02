@@ -10,7 +10,6 @@ import {
   Upload,
   Users,
   LogOut,
-  Shield,
   User as UserIcon,
   ChevronRight,
 } from "lucide-react";
@@ -67,21 +66,20 @@ export function Sidebar({ className, onItemClick }: SidebarProps) {
       )}
     >
       {/* Brand Logo */}
-      <div className="flex items-center gap-3 px-2 py-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white border border-white/20">
-          <Shield className="h-5.5 w-5.5" />
+      <div className="flex flex-col gap-1.5 px-2 py-3">
+        <div className="h-10 w-auto flex items-center justify-start">
+          <img 
+            src="/logo-complete-white.svg" 
+            alt="DABox Logo" 
+            className="h-10 w-auto object-contain"
+          />
         </div>
-        <div>
-          <span className="font-sans text-lg font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
-            Compass DABox
-          </span>
-          <p className="text-[10px] uppercase tracking-wider text-indigo-400 font-bold">
-            {isAdmin ? "Portal Admin" : "Portal Empleado"}
-          </p>
-        </div>
+        <p className="text-[9px] uppercase tracking-widest text-indigo-300 font-bold pl-1">
+          {isAdmin ? "Portal Admin" : "Portal Empleado"}
+        </p>
       </div>
 
-      <div className="my-6 border-t border-white/10" />
+      <div className="my-4 border-t border-white/10" />
 
       {/* Navigation Links */}
       <nav className="flex-1 space-y-1.5">

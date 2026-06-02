@@ -8,7 +8,7 @@
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-poppins);
 
   /* Remap indigo to Naranja Vibrante brand colors */
   --color-indigo-50: #FFF2EB;
@@ -18,8 +18,10 @@
   --color-indigo-400: #FF7D33;
   --color-indigo-500: #FF6B1A;
   --color-indigo-600: #FF5A00; /* Naranja Vibrante */
+  --color-indigo-650: #E65100; /* Naranja Oscuro */
   --color-indigo-700: #E65100;
   --color-indigo-800: #CC4800;
+  --color-indigo-855: #993600; /* Naranja Oscuro Alternativo */
   --color-indigo-900: #993600;
   --color-indigo-950: #662400;
 
@@ -31,11 +33,17 @@
   --color-slate-400: #7E84A3; /* Medium grey text */
   --color-slate-500: #4D5270; /* Description text */
   --color-slate-600: #2D314E;
+  --color-slate-650: #4D5270; /* Gris Oscuro */
   --color-slate-700: #1B2757;
   --color-slate-800: #E8DFD5; /* Border grey */
   --color-slate-850: #DFD5C9;
   --color-slate-900: #283A7F; /* Azul Marino */
   --color-slate-950: #0F1226; /* Azul Noche / Casi Negro */
+
+  /* Explicit brand colors */
+  --color-brand-orange: #FF5A00;
+  --color-brand-orange-secondary: #FF8125;
+  --color-brand-blue: #283A7F;
 }
 
 body {
