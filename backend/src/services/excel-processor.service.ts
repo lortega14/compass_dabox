@@ -15,6 +15,7 @@ const COLUMN_MAP: Record<string, string> = {
   "TOTAL": "totalBalance",
   "Saldo en Prestamos": "loanBalance",
   "Saldo": "finalBalance",
+  "Bajas": "bajas",
 };
 
 interface ParsedRow {
@@ -28,6 +29,7 @@ interface ParsedRow {
   totalBalance: number;
   loanBalance: number;
   finalBalance: number;
+  bajas: number;
 }
 
 export interface ProcessResult {
@@ -43,6 +45,7 @@ export interface ProcessResult {
 function shouldExcludeRow(row: Record<string, unknown>): boolean {
   const payrollType = String(row["payrollType"] ?? "").trim();
   const payrollCode = String(row["payrollCode"] ?? "").trim();
+  const fullName = String(row["fullName"] ?? "").trim();
   const keys = Object.keys(row);
   const firstKey = keys[0];
   const firstCellValue = firstKey ? String(row[firstKey] ?? "").trim() : "";
@@ -50,7 +53,8 @@ function shouldExcludeRow(row: Record<string, unknown>): boolean {
   if (payrollType === "MOV") return true;
   if (payrollCode === "999999" || payrollCode === "777777") return true;
   if (firstCellValue === "TOTALES") return true;
-  if (!payrollType || !payrollCode || !row["fullName"]) return true;
+  if (!payrollType || !payrollCode || !fullName) return true;
+  if (payrollType === "ID Nomina" || payrollCode === "Clave de Participante" || fullName === "Nombre") return true;
 
   return false;
 }
@@ -159,6 +163,7 @@ function parseExcel(buffer: Buffer): ParsedRow[] {
       totalBalance: toNumber(mapped.totalBalance),
       loanBalance: toNumber(mapped.loanBalance ?? 0),
       finalBalance: toNumber(mapped.finalBalance),
+      bajas: colIndices["bajas"] !== undefined ? toNumber(mapped.bajas) : 0,
     };
 
     parsedRows.push(row);
@@ -226,13 +231,13 @@ export async function processExcelUpload(
             },
             update: {
               fullName: row.fullName,
-              isActive: true,
+              isActive: row.bajas === 0,
             },
             create: {
               payrollType: row.payrollType,
               payrollCode: row.payrollCode,
               fullName: row.fullName,
-              isActive: true,
+              isActive: row.bajas === 0,
             },
           });
 
