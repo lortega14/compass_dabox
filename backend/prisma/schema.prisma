@@ -52,6 +52,7 @@ model EmployeeMonthlyRecord {
   loanBalance          Decimal  @default(0)
   finalBalance         Decimal
   createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
   employee             Employee @relation(fields: [employeeId], references: [id])
 
   @@unique([employeeId, periodDate])

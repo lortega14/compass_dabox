@@ -69,20 +69,12 @@ export function EmployeeHistoryDrawer({
     if (!data?.records || data.records.length === 0) {
       return { balance: 0, contributions: 0, yields: 0, loan: 0 };
     }
-    const latest = data.records[0]; // first item is newest
-    
-    // Sum total yields and contributions
-    let sumContributions = 0;
-    let sumYields = 0;
-    data.records.forEach((r) => {
-      sumContributions += r.employeeContribution;
-      sumYields += r.yields;
-    });
+    const latest = data.records[0]; // first item is newest (already sorted desc)
 
     return {
       balance: latest.finalBalance,
       contributions: latest.totalContributions,
-      yields: sumYields,
+      yields: latest.yields,
       loan: latest.loanBalance,
     };
   };

@@ -96,6 +96,7 @@ export async function getEmployeeSummary(userId: string) {
     loanBalance: Number(latestRecord.loanBalance),
     finalBalance: Number(latestRecord.finalBalance),
     lastPeriod: latestRecord.periodDate,
+    lastUpdated: latestRecord.updatedAt,
     recordCount,
   };
 }

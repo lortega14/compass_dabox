@@ -21,6 +21,7 @@ interface AreaChartProps {
     key: string;
     name: string;
     color: string;
+    fillColor?: string;
   }[];
   height?: number;
 }
@@ -87,19 +88,23 @@ export function AreaChart({ data, xKey, series, height = 350 }: AreaChartProps) 
           margin={{ top: 10, right: 10, left: 10, bottom: 5 }}
         >
           <defs>
-            {series.map((item, idx) => (
-              <linearGradient
-                key={item.key}
-                id={`grad-${item.key}`}
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="1"
-              >
-                <stop offset="5%" stopColor={item.color} stopOpacity={0.25} />
-                <stop offset="95%" stopColor={item.color} stopOpacity={0.0} />
-              </linearGradient>
-            ))}
+            {series.map((item, idx) => {
+              const gradId = `grad-${item.key.replace(/\s+/g, '-')}`;
+              const gradColor = item.fillColor || item.color;
+              return (
+                <linearGradient
+                  key={item.key}
+                  id={gradId}
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop offset="5%" stopColor={gradColor} stopOpacity={0.35} />
+                  <stop offset="95%" stopColor={gradColor} stopOpacity={0.05} />
+                </linearGradient>
+              );
+            })}
           </defs>
 
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(15, 18, 38, 0.05)" vertical={false} />
@@ -145,7 +150,7 @@ export function AreaChart({ data, xKey, series, height = 350 }: AreaChartProps) 
               stroke={item.color}
               strokeWidth={2}
               fillOpacity={1}
-              fill={`url(#grad-${item.key})`}
+              fill={`url(#grad-${item.key.replace(/\s+/g, '-')})`}
             />
           ))}
         </RechartsAreaChart>

@@ -96,7 +96,8 @@ export default function AdminDashboard() {
     {
       key: "Fondo Total",
       name: "Saldo Acumulado",
-      color: "#FF5A00", // Naranja Vibrante
+      color: "#FF5A00", // Naranja Vibrante (línea)
+      fillColor: "#283A7F", // Azul Marino empresa (relleno transparente)
     },
   ];
 

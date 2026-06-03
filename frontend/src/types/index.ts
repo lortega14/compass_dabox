@@ -72,6 +72,7 @@ export interface UserSummary {
   totalContributions: number;
   loanBalance: number;
   employeeName: string;
+  lastUpdated?: string;
 }
 
 export interface ExcelCredential {

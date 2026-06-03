@@ -23,7 +23,8 @@ export default function AdminUploadPage() {
 
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     const d = new Date();
-    // Default to first day of current month
+    // Default to previous month (the report arrives the 1st of the next month)
+    d.setMonth(d.getMonth() - 1);
     return new Date(d.getFullYear(), d.getMonth(), 1);
   });
 
@@ -126,7 +127,10 @@ export default function AdminUploadPage() {
               1. Configurar Periodo
             </CardTitle>
             <p className="text-[11px] text-slate-500">
-              Selecciona el mes y año de aplicación de los ahorros.
+              Selecciona el mes al que corresponden los datos del Excel.
+            </p>
+            <p className="text-[10px] text-amber-600 font-medium mt-1">
+              💡 Recuerda: el reporte llega el 1er día del mes siguiente, pero los datos pertenecen al mes anterior.
             </p>
           </CardHeader>
           <CardContent className="space-y-4">

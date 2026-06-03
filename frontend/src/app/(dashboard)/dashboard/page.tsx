@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../hooks/use-auth";
 import { api } from "../../../lib/api";
-import { formatCurrency, formatDate } from "../../../lib/format";
+import { formatCurrency, formatDate, formatDateTime } from "../../../lib/format";
 import { UserSummary, EmployeeMonthlyRecord } from "../../../types";
 import { KPICard } from "../../../components/dashboard/kpi-card";
 import { BarChart } from "../../../components/charts/bar-chart";
@@ -23,6 +23,7 @@ import {
   BadgeAlert,
   ArrowUpRight,
   ArrowDownRight,
+  RefreshCw,
 } from "lucide-react";
 import { Skeleton } from "../../../components/ui/skeleton";
 
@@ -133,9 +134,17 @@ export default function UserDashboard() {
             Aquí está el balance actual de tus fondos de ahorro.
           </p>
         </div>
-        <div className="inline-flex items-center gap-2 rounded-xl bg-white/80 border border-slate-300 px-4 py-2 text-xs text-slate-600">
-          <Calendar className="h-4 w-4 text-indigo-650" />
-          <span className="capitalize">{getGreetingDate()}</span>
+        <div className="flex flex-col sm:items-end gap-1.5">
+          <div className="inline-flex items-center gap-2 rounded-xl bg-white/80 border border-slate-300 px-4 py-2 text-xs text-slate-600">
+            <Calendar className="h-4 w-4 text-indigo-650" />
+            <span className="capitalize">{getGreetingDate()}</span>
+          </div>
+          {summary?.lastUpdated && (
+            <div className="inline-flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-1.5 text-[11px] text-emerald-700 font-medium">
+              <RefreshCw className="h-3 w-3" />
+              Datos actualizados al {formatDateTime(summary.lastUpdated)}
+            </div>
+          )}
         </div>
       </div>
 
