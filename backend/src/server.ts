@@ -66,10 +66,12 @@ app.use(
   }
 );
 
-// ── Start Server ───────────────────────────────────────────────────────
-app.listen(env.PORT, () => {
-  console.log(`🚀 Compass DABox backend running on port ${env.PORT}`);
-  console.log(`   Environment: ${env.NODE_ENV}`);
-});
+// ── Start Server (Only when run directly, not in Vercel serverless) ───────
+if (!process.env.VERCEL) {
+  app.listen(env.PORT, () => {
+    console.log(`🚀 Compass DABox backend running on port ${env.PORT}`);
+    console.log(`   Environment: ${env.NODE_ENV}`);
+  });
+}
 
 export default app;
