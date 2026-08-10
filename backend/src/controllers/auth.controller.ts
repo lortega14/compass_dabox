@@ -35,7 +35,7 @@ export async function login(req: Request, res: Response): Promise<void> {
     res.cookie("access_token", result.token, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: "lax",
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       ...(env.COOKIE_DOMAIN ? { domain: env.COOKIE_DOMAIN } : {}),
     });
@@ -135,10 +135,11 @@ export async function changePassword(
 }
 
 export async function logout(_req: Request, res: Response): Promise<void> {
+  const isProduction = env.NODE_ENV === "production";
   res.clearCookie("access_token", {
     httpOnly: true,
-    secure: env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     ...(env.COOKIE_DOMAIN ? { domain: env.COOKIE_DOMAIN } : {}),
   });
   res.json({ message: "Sesión cerrada exitosamente." });

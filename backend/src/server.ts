@@ -13,7 +13,14 @@ const app = express();
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || origin.includes("localhost") || origin.includes("127.0.0.1") || env.NODE_ENV !== "production") {
+      if (!origin) return callback(null, true);
+      if (
+        origin.includes("localhost") ||
+        origin.includes("127.0.0.1") ||
+        origin.endsWith(".vercel.app") ||
+        env.CORS_ORIGIN === "*" ||
+        env.CORS_ORIGIN === origin
+      ) {
         callback(null, true);
       } else {
         callback(null, env.CORS_ORIGIN);
