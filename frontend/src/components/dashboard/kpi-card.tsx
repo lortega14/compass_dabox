@@ -62,7 +62,7 @@ export function KPICard({
   return (
     <Card
       className={cn(
-        "glass-card overflow-hidden hover:border-indigo-600/30 transition-premium hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-600/5",
+        "glass-card overflow-hidden hover:border-indigo-600/30 transition-premium hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-600/5 min-h-[145px] flex flex-col justify-between",
         accentStyles.border,
         className
       )}
