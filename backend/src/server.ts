@@ -18,6 +18,7 @@ app.use(
         origin.includes("localhost") ||
         origin.includes("127.0.0.1") ||
         origin.endsWith(".vercel.app") ||
+        origin.includes("dabox.mx") ||
         env.CORS_ORIGIN === "*" ||
         env.CORS_ORIGIN === origin
       ) {

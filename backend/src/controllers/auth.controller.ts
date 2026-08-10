@@ -41,6 +41,7 @@ export async function login(req: Request, res: Response): Promise<void> {
     });
 
     res.json({
+      token: result.token,
       user: result.user,
       mustChangePassword: result.user.mustChangePassword,
     });

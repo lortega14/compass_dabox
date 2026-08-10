@@ -21,7 +21,10 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true });
     try {
       const response = await api.post("/api/auth/login", { username, password });
-      const { user, mustChangePassword } = response.data;
+      const { token, user, mustChangePassword } = response.data;
+      if (token && typeof window !== "undefined") {
+        localStorage.setItem("token", token);
+      }
       set({
         user,
         isAuthenticated: !mustChangePassword, // if they must change, they are not fully authenticated yet
@@ -29,6 +32,9 @@ export const useAuthStore = create<AuthState>((set) => ({
       });
       return { mustChangePassword, role: user.role };
     } catch (error) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+      }
       set({ isLoading: false, user: null, isAuthenticated: false });
       throw error;
     }
@@ -41,6 +47,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+      }
       set({ user: null, isAuthenticated: false, isLoading: false });
       if (typeof window !== "undefined") {
         window.location.href = "/login";

@@ -10,15 +10,26 @@ export const api = axios.create({
   },
 });
 
+// Interceptor to attach Authorization header if token exists in localStorage (for cross-domain fallback)
+api.interceptors.request.use((config) => {
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
 // Interceptor to redirect to /login on 401 Unauthorized responses
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Check if we are not already on login page or setup-password
-      const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
-      if (currentPath !== "/login" && currentPath !== "/setup-password") {
-        if (typeof window !== "undefined") {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        const currentPath = window.location.pathname;
+        if (currentPath !== "/login" && currentPath !== "/setup-password") {
           window.location.href = "/login";
         }
       }
