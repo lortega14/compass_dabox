@@ -62,28 +62,28 @@ export function KPICard({
   return (
     <Card
       className={cn(
-        "glass-card overflow-hidden hover:border-indigo-600/30 transition-premium hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-600/5 min-h-[145px] flex flex-col justify-between",
+        "glass-card overflow-hidden hover:border-indigo-600/30 transition-premium hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-600/5 h-[160px] flex flex-col justify-between",
         accentStyles.border,
         className
       )}
     >
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+      <CardContent className="p-5 h-full flex flex-col justify-between">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 line-clamp-1">
             {title}
           </span>
-          <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl", accentStyles.iconBg)}>
-            <Icon className="h-5 w-5" />
+          <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl", accentStyles.iconBg)}>
+            <Icon className="h-4.5 w-4.5" />
           </div>
         </div>
 
-        <div className="mt-4">
-          <h3 className="text-xl font-bold tracking-tight text-slate-955 sm:text-2xl md:text-3xl">
+        <div className="mt-1">
+          <h3 className="text-lg font-bold tracking-tight text-slate-955 sm:text-xl md:text-2xl whitespace-nowrap truncate">
             <AnimatedCounter value={value} formatter={formatter} />
           </h3>
 
           {trend && (
-            <div className="mt-2 flex items-center gap-1.5 text-xs">
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs">
               <span
                 className={cn(
                   "font-semibold rounded px-1.5 py-0.5",
@@ -102,7 +102,7 @@ export function KPICard({
           )}
 
           {!trend && subtitle && (
-            <p className="mt-2 text-xs text-slate-500">{subtitle}</p>
+            <p className="mt-1 text-xs text-slate-500 line-clamp-1">{subtitle}</p>
           )}
         </div>
       </CardContent>
