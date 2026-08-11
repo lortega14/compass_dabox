@@ -61,15 +61,16 @@ export function KPICard({
 
   return (
     <Card
+      title={subtitle}
       className={cn(
-        "glass-card overflow-hidden hover:border-indigo-600/30 transition-premium hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-600/5 h-[160px] flex flex-col justify-between",
+        "glass-card overflow-hidden hover:border-indigo-600/30 transition-premium hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-600/5 min-h-[165px] flex flex-col justify-between",
         accentStyles.border,
         className
       )}
     >
       <CardContent className="p-5 h-full flex flex-col justify-between">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 line-clamp-1">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
             {title}
           </span>
           <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl", accentStyles.iconBg)}>
@@ -102,7 +103,12 @@ export function KPICard({
           )}
 
           {!trend && subtitle && (
-            <p className="mt-1 text-xs text-slate-500 line-clamp-1">{subtitle}</p>
+            <p
+              title={subtitle}
+              className="mt-1 text-[11px] leading-snug text-slate-500"
+            >
+              {subtitle}
+            </p>
           )}
         </div>
       </CardContent>
